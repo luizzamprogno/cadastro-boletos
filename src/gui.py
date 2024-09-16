@@ -1,5 +1,30 @@
 import customtkinter as ctk
 from database import *
+from tkinter import messagebox
+from datetime import datetime
+
+def validar_entrada(nome_boleto, valor, data_vencimento, frequencia):
+    
+    if not nome_boleto or not valor or not data_vencimento or not frequencia:
+        return 'Preencha todos os campos'
+    
+    # Verifica se o valor do boleto é numético
+    try:
+        valor = float(valor)
+    except ValueError:
+        return 'O valor do boleto deve ser numérico'
+
+    # Verificar formato da data de vencimento
+    try:
+        datetime.strptime(data_vencimento, '%d-%m-%Y')
+    except ValueError:
+        return 'A data de vencimento deve estar no formato DD-MM-YYYY'
+
+    # Verificar a frequencia
+    if frequencia.lower() not in ['mensal', 'anual', 'semanal']:
+        return 'A frequência deve ser mensal, anual ou semanal'
+
+    return None
 
 def init_gui():
     app = ctk.CTk()
@@ -13,16 +38,13 @@ def init_gui():
         data_vencimento = data_entry.get()
         frequencia = frequencia_entry.get()
 
-        # Verifica se todos os campos estão preenchidos
-        if not nome_boleto or not valor or not data_vencimento or not frequencia:
-            message.configure(text="Preencha todos os campos")
-
-        try:
-            valor = float(valor)  # Converte o valor para float
-        except ValueError:
-            message.configure(text="O valor do boleto deve ser numérico")
+        erro = validar_entrada(nome_boleto, valor, data_vencimento, frequencia)
+        if erro:
+            message.configure(text=erro)
+            return
             
         cadastrar_boleto(nome_boleto, valor, data_vencimento, frequencia)
+        message.configure(text='Boleto cadastrado com sucesso')
 
     # Label e campo para nome do boleto
     nome_label = ctk.CTkLabel(app, text="Nome do Boleto:")
@@ -43,7 +65,7 @@ def init_gui():
     data_entry.pack()
 
     # Label e campo para frequência
-    frequencia_label = ctk.CTkLabel(app, text="Frequência (mensal, anual, etc.):")
+    frequencia_label = ctk.CTkLabel(app, text="Frequência (mensal, anual, semanal.):")
     frequencia_label.pack(pady=10)
     frequencia_entry = ctk.CTkEntry(app, width=250)
     frequencia_entry.pack()

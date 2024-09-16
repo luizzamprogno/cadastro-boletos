@@ -1,5 +1,4 @@
 import sqlite3
-from datetime import datetime
 from tkinter import messagebox
 
 # Gerenciar a conexão com banco de dados
@@ -31,4 +30,4 @@ def cadastrar_boleto(nome_boleto, valor, data_vencimento, frequencia):
         VALUES (?, ?, ?, ?)
     ''', (nome_boleto, valor, data_vencimento, frequencia))
 
-    messagebox.showinfo("Sucesso", "Boleto cadastrado com sucesso!")
+    conexao.commit()
