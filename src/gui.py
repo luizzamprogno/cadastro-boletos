@@ -1,7 +1,5 @@
 import customtkinter as ctk
 from database import *
-from tkinter import messagebox
-from datetime import datetime
 
 def validar_entrada(nome_boleto, valor, data_vencimento, frequencia):
     
